@@ -186,39 +186,3 @@ class Mobileclient(_Base):
                 'GoogleLogin auth=' + self._authtoken
 
         return rsession.request(**req_kwargs)
-
-
-class Musicmanager(_Base):
-    def __init__(self, *args, **kwargs):
-        super(Musicmanager, self).__init__(*args, **kwargs)
-        self._oauth_creds = None
-
-    def login(self, oauth_credentials, *args, **kwargs):
-        """Store an already-acquired oauth2client.Credentials."""
-        super(Musicmanager, self).login()
-
-        try:
-            # refresh the token right away to check auth validity
-            oauth_credentials.refresh(httplib2.Http())
-        except oauth2client.client.Error:
-            log.exception("error when refreshing oauth credentials")
-
-        if oauth_credentials.access_token_expired:
-            log.info("could not refresh oauth credentials")
-            return False
-
-        self._oauth_creds = oauth_credentials
-        self.is_authenticated = True
-
-        return self.is_authenticated
-
-    def _send_with_auth(self, req_kwargs, desired_auth, rsession):
-        if desired_auth.oauth:
-            if self._oauth_creds.access_token_expired:
-                self._oauth_creds.refresh(httplib2.Http())
-
-            req_kwargs['headers'] = req_kwargs.get('headers', {})
-            req_kwargs['headers']['Authorization'] = \
-                'Bearer ' + self._oauth_creds.access_token
-
-        return rsession.request(**req_kwargs)
