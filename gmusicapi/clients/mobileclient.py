@@ -71,7 +71,7 @@ class Mobileclient(_Base):
 
     # TODO expose max/page-results, updated_after, etc for list operations
 
-    def set_authtoken(authToken):
+    def set_authtoken(self, authToken):
         self._authtoken = authToken
         self.is_authenticated = True
 
