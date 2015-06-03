@@ -41,7 +41,6 @@ cpp_type_to_python = dict(
     for cpp in cpplist
 )
 
-log_filepath = os.path.join(my_appdirs.user_log_dir, 'gmusicapi.log')
 printed_log_start_message = False  # global, set in config_debug_logging
 
 # matches a mac address in GM form, eg
@@ -319,14 +318,6 @@ def configure_debug_log_handlers(logger):
 
     logger.setLevel(logging.DEBUG)
 
-    logging_to_file = True
-    try:
-        make_sure_path_exists(os.path.dirname(log_filepath), 0o700)
-        debug_handler = logging.FileHandler(log_filepath)
-    except OSError:
-        logging_to_file = False
-        debug_handler = logging.StreamHandler()
-
     debug_handler.setLevel(logging.DEBUG)
 
     important_handler = logging.StreamHandler()
@@ -339,8 +330,6 @@ def configure_debug_log_handlers(logger):
         # print out startup message without verbose formatting
         logger.info("!-- begin debug log --!")
         logger.info("version: " + __version__)
-        if logging_to_file:
-            logger.info("logging to: " + log_filepath)
 
         printed_log_start_message = True
 
