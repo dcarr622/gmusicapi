@@ -71,6 +71,12 @@ class Mobileclient(_Base):
 
     # TODO expose max/page-results, updated_after, etc for list operations
 
+    def set_authtoken(authToken):
+        self._authtoken = authToken
+        self.is_authenticated = True
+
+        return True
+
     def get_all_songs(self, incremental=False, include_deleted=False):
         """Returns a list of dictionaries that each represent a song.
 
