@@ -412,14 +412,15 @@ class Mobileclient(_Base):
 
         user_playlists = []
 
-        for p in self.get_all_playlists(incremental=True):
-            if p.get('type') == 'SHARED':
-                p['tracks'] = self.get_shared_playlist_contents(p['shareToken'])
-            else:
-                entries = [e for e in all_playlist_entries if e['playlistId'] == p['id']]
-                entries.sort(key=itemgetter('absolutePosition'))
-                p['tracks'] = entries
-            user_playlists.append(p)
+        for chunk in self.get_all_playlists(incremental=True):
+            for p in chunk:
+                if p.get('type') == 'SHARED':
+                    p['tracks'] = self.get_shared_playlist_contents(p['shareToken'])
+                else:
+                    entries = [e for e in all_playlist_entries if e['playlistId'] == p['id']]
+                    entries.sort(key=itemgetter('absolutePosition'))
+                    p['tracks'] = entries
+                user_playlists.append(p)
 
         return user_playlists
 
