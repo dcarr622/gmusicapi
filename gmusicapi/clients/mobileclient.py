@@ -404,22 +404,27 @@ class Mobileclient(_Base):
           }
         """
 
-        user_playlists = [p for p in self.get_all_playlists()
-                          if (p.get('type') == 'USER_GENERATED' or
-                              p.get('type') != 'SHARED' or
-                              'type' not in p)]
+        all_playlist_entries = []
 
         all_entries = self._get_all_items(mobileclient.ListPlaylistEntries,
-                                          incremental=False, include_deleted=False,
+                                          incremental=True, include_deleted=False,
                                           updated_after=None)
 
-        for playlist in user_playlists:
-            # TODO could use a dict to make this faster
-            entries = [e for e in all_entries
-                       if e['playlistId'] == playlist['id']]
-            entries.sort(key=itemgetter('absolutePosition'))
+        for chunk in all_entries:
+            for s in chunk:
+                all_playlist_entries.append(s)
 
-            playlist['tracks'] = entries
+        user_playlists = []
+
+        for chunk in self.get_all_playlists(incremental=True):
+            for p in chunk:
+                if p.get('type') == 'SHARED':
+                    p['tracks'] = self.get_shared_playlist_contents(p['shareToken'])
+                else:
+                    entries = [e for e in all_playlist_entries if e['playlistId'] == p['id']]
+                    entries.sort(key=itemgetter('absolutePosition'))
+                    p['tracks'] = entries
+                user_playlists.append(p)
 
         return user_playlists
 
