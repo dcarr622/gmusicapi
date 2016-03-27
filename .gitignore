@@ -21,3 +21,7 @@ bin
 lib
 include
 share
+.tox
+
+gmusicapi/resources/
+.idea
