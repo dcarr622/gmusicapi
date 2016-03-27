@@ -184,6 +184,12 @@ class Mobileclient(_Base):
 
         return True
 
+    def set_authtoken(self, authToken):
+        self._authtoken = authToken
+        self.is_authenticated = True
+
+        return self.is_authenticated
+
     def _send_with_auth(self, req_kwargs, desired_auth, rsession):
         if desired_auth.oauth:
             req_kwargs.setdefault('headers', {})
